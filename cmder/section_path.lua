@@ -7,6 +7,8 @@ local function pathReplace(path, leader, replace)
     local gsub = string.gsub
     -- anchor to the start and escape any special pattern chars
     leader = "^" .. gsub(leader, "[%%%]%^%-$().[*+?]", "%%%1")
+    -- ensure replace is escaped properly
+    replace = gsub(replace, "%%", "%%%%")
     return gsub(path, leader, replace)
 end
 
