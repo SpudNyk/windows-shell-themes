@@ -56,6 +56,20 @@ local ansiEscChar = "\x1b"
 local ansiEscape = ansiEscChar .. "["
 local resetEscape = ansiEscape .. "0m"
 
+local function promptTitle(title)
+    if title and title ~= "" then
+        return ansiEscChar .. "]2;" .. title .. "\x07"
+    end
+    return ""
+end
+
+local function promptPath(path)
+    if path and path ~= "" then
+        return ansiEscChar .. "]9;9;\"" .. path .. "\"\x07"
+    end
+    return ""
+end
+
 local function getColorEscape(foreground, background, bold)
     local sequence = ""
     local fgColor = colorNames[foreground]
@@ -85,22 +99,26 @@ local function promptColor(color, context)
 end
 
 local function promptContent(content, context, useLeader)
+    local prompt = ""
     if content then
         local text = content.text
         if text and text ~= "" then
-            local prompt = promptColor(baseColor, context)
+            prompt = prompt .. promptColor(baseColor, context)
             if useLeader and content.leader and content.leader ~= "" then
                 prompt = prompt .. content.leader
             end
-            return prompt .. promptColor(content, context) .. text
+            prompt = prompt .. promptColor(content, context) .. text
         end
+        prompt = prompt .. promptTitle(content.title) ..
+                     promptPath(content.path)
     end
-    return ""
+    return prompt
 end
 
 -- create the core context with some commonly used values
 local function createContext()
-    return {cwd = clink.get_cwd(), home = clink.get_env("HOME")}
+    local cwd = clink.get_cwd()
+    return {cwd = cwd, home = clink.get_env("HOME"), name = FILE_basename(cwd)}
 end
 
 local prompt_sections = {}
@@ -130,12 +148,15 @@ function PROMPT_render()
     for _, section in pairs(prompt_sections) do section.prepare(context) end
 
     local prompt = ""
+    local prepend = false
     -- base color can change throughout rendering ensure it starts at the default
     baseColor.foreground = defaultColor.foreground
     baseColor.background = defaultColor.background
     for index, section in pairs(prompt_sections) do
-        prompt = prompt ..
-                     promptContent(section.content(context), context, index > 1)
+        local append = promptContent(section.content(context), context, prepend)
+        -- only prepend if we have content
+        prepend = (prepend or append ~= "")
+        prompt = prompt .. append
     end
 
     return prompt .. resetEscape

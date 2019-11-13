@@ -9,3 +9,5 @@ PROMPT_include("npm", {
     showName = false
 })
 PROMPT_include("end")
+-- set the window title and path
+PROMPT_include("window")

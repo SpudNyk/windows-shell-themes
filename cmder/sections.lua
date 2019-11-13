@@ -21,6 +21,8 @@ local function sectionContent(section, options, context)
             if not options then options = {} end
             -- include core options fore each section
             return {
+                title = nil,
+                path = nil,
                 text = text,
                 foreground = options.foreground,
                 background = options.background,
