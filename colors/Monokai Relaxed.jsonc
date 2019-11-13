@@ -1,0 +1,24 @@
+{
+  "name": "Monokai Relaxed",
+  "author": "Monokai Relaxed",
+  "color": [
+    "#2d2a2e", // DarkBlack
+    "#b44461", // DarkRed
+    "#7fa559", // DarkGreen
+    "#b09546", // DarkYellow
+    "#036ec5", // DarkBlue
+    "#7c72af", // DarkMagenta
+    "#5ca8b1", // DarkCyan
+    "#bcbcba", // DarkWhite
+    "#727072", // Black
+    "#ff6188", // Red
+    "#a9dc76", // Green
+    "#ffd866", // Yellow
+    "#1a96fb", // Blue
+    "#ab9df2", // Magenta
+    "#78dce8", // Cyan
+    "#fcfcfa"  // White
+  ],
+  "foreground": "#fcfcfa",
+  "background": "#2d2a2e"
+}

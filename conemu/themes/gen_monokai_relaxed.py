@@ -12,15 +12,15 @@ import re
 # This is a demo color scheme
 palette = [
 '#2d2a2e', # Black
-'#fc9867', # DarkBlue
-'#a9dc76', # DarkGreen
-'#78dce8', # DarkCyan
-'#ff6188', # DarkRed
-'#ab9df2', # DarkMagenta
-'#ffd866', # DarkYellow
-'#fcfcfa', # Gray
+'#036ec5', # DarkBlue
+'#7fa559', # DarkGreen
+'#5ca8b1', # DarkCyan
+'#b44461', # DarkRed
+'#7c72af', # DarkMagenta
+'#b09546', # DarkYellow
+'#bcbcba', # Gray
 '#727072', # DarkGray
-'#fc9867', # Blue
+'#1a96fb', # Blue
 '#a9dc76', # Green
 '#78dce8', # Cyan
 '#ff6188', # Red

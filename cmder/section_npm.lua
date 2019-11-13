@@ -57,7 +57,7 @@ local section = {
     content = content,
     options = {
         leader = " is ",
-        symbols = {package = "", separator = "@", versionOnly = "v"},
+        symbols = {package = "◇", separator = "@", versionOnly = "v"},
         foreground = COLOR_Green,
         showName = true,
         showVersion = true

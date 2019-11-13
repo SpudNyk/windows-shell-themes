@@ -137,7 +137,7 @@ function Write-Theme {
         $prompt += Write-Prompt -Object " in" -ForegroundColor $sl.Colors.PromptForegroundColor
         # write folder (prefer trailing sep to indicate root on drive)
         $dir = if ($pwd.path -eq "$($pwd.Drive.Name):\") { "$($pwd.Drive.Name):$($sl.PromptSymbols.PathSeparator)" } else { Get-FullPath -dir $pwd }
-        $prompt += Write-Prompt -Object " $dir " -ForegroundColor $sl.Colors.PromptForegroundColor
+        $prompt += Write-Prompt -Object " $dir " -ForegroundColor $sl.Colors.PathForegroundColor
     }
 
     if ($sl.Sections.GitBranch -or $sl.Sections.GitStatus) {
@@ -234,10 +234,34 @@ $sl.GitSymbols.StashSymbol = "$"
 $sl.Colors.TimeStampForegroundColor = [ConsoleColor]::Yellow
 $sl.Colors.ExecutionTimeForegroundColor = [ConsoleColor]::Yellow
 $sl.Colors.CommandFailedIconForegroundColor = [ConsoleColor]::Red
+$sl.Colors.PathForegroundColor = [ConsoleColor]::Cyan
 $sl.Colors.PromptHighlightColor = [ConsoleColor]::Green
-$sl.Colors.PromptForegroundColor = [ConsoleColor]::Cyan
+$sl.Colors.PromptForegroundColor = [ConsoleColor]::Gray
 $sl.Colors.GitBranchForegroundColor = [ConsoleColor]::Magenta
 $sl.Colors.GitStatusForegroundColor = [ConsoleColor]::Red
 $sl.Colors.WithForegroundColor = [ConsoleColor]::DarkRed
 $sl.Colors.WithBackgroundColor = [ConsoleColor]::Magenta
 $sl.Colors.VirtualEnvForegroundColor = [ConsoleColor]::Red
+
+$PSReadLineOptions = @{
+    # Wanted to Use "… " but PSReadline does not support it
+    # Something to do with unicode roundtriping
+    ContinuationPrompt = "$([char]::ConvertFromUtf32(0x00bb)) "
+    Colors             = @{
+        "ContinuationPrompt" = [ConsoleColor]::DarkGray
+        "Command"            = [ConsoleColor]::White
+        "Comment"            = [ConsoleColor]::DarkGreen
+        "Number"             = [ConsoleColor]::Green
+        "Member"             = [ConsoleColor]::Cyan
+        "Operator"           = [ConsoleColor]::Cyan
+        "Type"               = [ConsoleColor]::DarkGreen
+        "String"             = [ConsoleColor]::DarkRed
+        "Variable"           = [ConsoleColor]::Cyan
+        "Parameter"          = [ConsoleColor]::DarkGreen
+        "Default"            = [ConsoleColor]::White
+        "Error"              = [ConsoleColor]::Red
+        "Selection"          = [ConsoleColor]::Yellow
+        "Keyword"            = [ConsoleColor]::Blue
+    }
+}
+Set-PSReadLineOption @PSReadLineOptions

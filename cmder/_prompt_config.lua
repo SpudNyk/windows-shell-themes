@@ -1,13 +1,13 @@
 PROMPT_reset()
-PROMPT_include("time")
-PROMPT_include("path")
-PROMPT_include("git-branch")
--- PROMPT_color(COLOR_Red, COLOR_Blue)
-PROMPT_include("git-status")
--- PROMPT_color(COLOR_White)
-PROMPT_include("npm", {
-    showName = false
+PROMPT_color_default({
+    foreground = COLOR_White,
+    bold = false
 })
-PROMPT_include("end")
+PROMPT_include("time", {foreground = COLOR_Yellow, bold = true})
+PROMPT_include("path", {foreground = COLOR_Cyan, bold = true})
+PROMPT_include("git-branch", {foreground = COLOR_Magenta, bold = true})
+PROMPT_include("git-status", {foregroud = COLOR_Red, bold = true})
+PROMPT_include("npm", {showName = false, foreground = COLOR_Blue, bold = true})
+PROMPT_include("end", {foreground = COLOR_Green, bold = true})
 -- set the window title and path
 PROMPT_include("window")

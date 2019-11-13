@@ -81,21 +81,26 @@ local function getColorEscape(foreground, background, bold)
     return ""
 end
 
-local defaultColor = {foreground = COLOR_Cyan, background = nil}
-local baseColor = {
-    foreground = defaultColor.foreground,
-    background = defaultColor.background
-}
+local function applyColor(dest, color, allowNil)
+    if allowNil or color.foreground ~= nil then
+        dest.foreground = color.foreground
+    end
+    if allowNil or color.background ~= nil then
+        dest.background = color.background
+    end
+    if allowNil or color.bold ~= nil then dest.bold = color.bold end
+    return dest
+end
+
+local defaultColor = {foreground = COLOR_White, background = nil, bold = false}
 
 local function promptColor(color, context)
-    local escape = getColorEscape(color.foreground, color.background)
-    -- if the currently prompted color doesn't match
-    -- return the escape sequence
-    if escape ~= context.prompt_color then
-        context.prompt_color = escape
-        return escape
-    end
-    return ""
+    if color == nil then return "" end
+    local escape = resetEscape ..
+                       getColorEscape(color.foreground, color.background,
+                                      color.bold)
+
+    return escape
 end
 
 local function promptContent(content, context, useLeader)
@@ -103,7 +108,7 @@ local function promptContent(content, context, useLeader)
     if content then
         local text = content.text
         if text and text ~= "" then
-            prompt = prompt .. promptColor(baseColor, context)
+            prompt = prompt .. promptColor(context.baseColor, context)
             if useLeader and content.leader and content.leader ~= "" then
                 prompt = prompt .. content.leader
             end
@@ -118,7 +123,12 @@ end
 -- create the core context with some commonly used values
 local function createContext()
     local cwd = clink.get_cwd()
-    return {cwd = cwd, home = clink.get_env("HOME"), name = FILE_basename(cwd)}
+    return {
+        cwd = cwd,
+        home = clink.get_env("HOME"),
+        name = FILE_basename(cwd),
+        baseColor = applyColor({}, defaultColor)
+    }
 end
 
 local prompt_sections = {}
@@ -127,11 +137,15 @@ local prompt_sections = {}
 function PROMPT_reset() prompt_sections = {} end
 
 local function noop() end
+
+function PROMPT_color_default(color, ignoreNil)
+    applyColor(defaultColor, color, not ignoreNil)
+end
+
 -- change the base prompt color after this
-function PROMPT_color(foreground, background)
-    local function updateColor()
-        baseColor.foreground = foreground
-        baseColor.background = background
+function PROMPT_color(color, ignoreNil)
+    local function updateColor(_, context)
+        applyColor(context.baseColor, color, not ignoreNil)
         return nil
     end
     prompt_sections[#prompt_sections + 1] =
@@ -149,9 +163,6 @@ function PROMPT_render()
 
     local prompt = ""
     local prepend = false
-    -- base color can change throughout rendering ensure it starts at the default
-    baseColor.foreground = defaultColor.foreground
-    baseColor.background = defaultColor.background
     for index, section in pairs(prompt_sections) do
         local append = promptContent(section.content(context), context, prepend)
         -- only prepend if we have content

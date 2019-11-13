@@ -10,7 +10,12 @@ local section = {
     name = "git-branch",
     prepare = prepare,
     content = content,
-    options = {leader = " on ", symbol = "", foreground = COLOR_Magenta}
+    options = {
+        leader = " on ",
+        symbol = "",
+        foreground = COLOR_Magenta,
+        bold = true
+    }
 }
 
 SECTION_register(section)
