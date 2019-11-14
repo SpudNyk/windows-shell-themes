@@ -218,7 +218,7 @@ $sl | Add-Member -NotePropertyName ExecutionTime -NotePropertyValue @{
 }
 
 $sl.PromptSymbols.StartSymbol = '#'
-$sl.PromptSymbols.PromptIndicator = [char]::ConvertFromUtf32(0x279C)
+$sl.PromptSymbols.PromptIndicator = [char]::ConvertFromUtf32(0x2192)
 $sl.GitSymbols.StatusPrefixSymbol = "["
 $sl.GitSymbols.StatusSuffixSymbol = "]"
 $sl.GitSymbols.BranchSymbol = [char]::ConvertFromUtf32(0xE0A0)
@@ -264,4 +264,19 @@ $PSReadLineOptions = @{
         "Keyword"            = [ConsoleColor]::Blue
     }
 }
-Set-PSReadLineOption @PSReadLineOptions
+try {
+    Set-PSReadLineOption @PSReadLineOptions
+}
+catch [System.Management.Automation.ParameterBindingException] {
+    # Handled the error so remove it
+    $error.RemoveAt($error.Count - 1)
+    # Handle PSReadline < 2
+    Set-PSReadLineOption -ContinuationPrompt $PSReadLineOptions.ContinuationPrompt
+    # Set all the valid values for older PSReadline
+    $colors = $PSReadLineOptions.Colors
+    foreach ($token in ("None", "Comment", "Keyword", "String", "Operator", "Variable", "Command", "Parameter", "Type", "Number", "Member")) {
+        if ($colors.ContainsKey($token)) {
+            Set-PSReadlineOption -TokenKind $token -ForegroundColor $colors[$token]
+        }
+    }
+}
