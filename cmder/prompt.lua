@@ -74,10 +74,10 @@ local function getColorEscape(foreground, background, bold)
     local sequence = ""
     local fgColor = colorNames[foreground]
     local bgColor = colorNames[background]
-    if fgColor then sequence = ansiEscape .. fgColor.foreground end
+    if fgColor then sequence = fgColor.foreground end
     if bold then sequence = sequence .. ";1" end
     if bgColor then sequence = sequence .. ";" .. bgColor.background end
-    if sequence ~= "" then return sequence .. "m" end
+    if sequence ~= "" then return ansiEscape .. sequence .. "m" end
     return ""
 end
 

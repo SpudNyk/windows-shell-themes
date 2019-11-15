@@ -111,15 +111,7 @@ function CONTEXT_git_status(context)
     if git_status == false then return nil end
     if git_status ~= nil then return git_status end
     if CONTEXT_git_branch(context) then
-        if GIT_get_conflict() then
-            context.git_status = "conflict"
-        else
-            if GIT_get_clean() then
-                context.git_status = "clean"
-            else
-                context.git_status = "dirty"
-            end
-        end
+        context.git_status = GIT_status()
         return context.git_status
     else
         context.git_status = false
