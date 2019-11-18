@@ -64,7 +64,6 @@ function Format-GitStatus {
         $unmerged = $false
 
         if ($status.HasIndex) {
-            $c = $status.Index
             $added = $added -or ($status.Index.Added.Count -gt 0)
             $modified = $modified -or ($status.Index.Modified.Count -gt 0)
             $deleted = $deleted -or ($status.Index.Deleted.Count -gt 0)
@@ -72,7 +71,6 @@ function Format-GitStatus {
         }
 
         if ($status.HasWorking) {
-            $c = $status.Working
             $untracked = $untracked -or ($status.Working.Added -gt 0)
             $modified = $modified -or ($status.Working.Modified.Count -gt 0)
             $deleted = $deleted -or ($status.Working.Deleted.Count -gt 0)
@@ -243,40 +241,40 @@ $sl.Colors.WithForegroundColor = [ConsoleColor]::DarkRed
 $sl.Colors.WithBackgroundColor = [ConsoleColor]::Magenta
 $sl.Colors.VirtualEnvForegroundColor = [ConsoleColor]::Red
 
-$PSReadLineOptions = @{
-    # Wanted to Use "… " but PSReadline does not support it
-    # Something to do with unicode roundtriping
-    ContinuationPrompt = "$([char]::ConvertFromUtf32(0x00bb)) "
-    Colors             = @{
-        "ContinuationPrompt" = [ConsoleColor]::DarkGray
-        "Command"            = [ConsoleColor]::White
-        "Comment"            = [ConsoleColor]::DarkGreen
-        "Number"             = [ConsoleColor]::Green
-        "Member"             = [ConsoleColor]::Cyan
-        "Operator"           = [ConsoleColor]::Cyan
-        "Type"               = [ConsoleColor]::DarkGreen
-        "String"             = [ConsoleColor]::DarkRed
-        "Variable"           = [ConsoleColor]::Cyan
-        "Parameter"          = [ConsoleColor]::DarkGreen
-        "Default"            = [ConsoleColor]::White
-        "Error"              = [ConsoleColor]::Red
-        "Selection"          = [ConsoleColor]::Yellow
-        "Keyword"            = [ConsoleColor]::Blue
+if (Get-Module PSReadline) {
+    $PSReadLineOptions = @{
+        # Wanted to Use "… " but PSReadline does not support it
+        # Something to do with unicode roundtriping
+        ContinuationPrompt = "$([char]::ConvertFromUtf32(0x00bb)) "
+        Colors             = @{
+            "ContinuationPrompt" = [ConsoleColor]::DarkGray
+            "Command"            = [ConsoleColor]::White
+            "Comment"            = [ConsoleColor]::DarkGreen
+            "Number"             = [ConsoleColor]::Green
+            "Member"             = [ConsoleColor]::Cyan
+            "Operator"           = [ConsoleColor]::Cyan
+            "Type"               = [ConsoleColor]::DarkGreen
+            "String"             = [ConsoleColor]::DarkRed
+            "Variable"           = [ConsoleColor]::Cyan
+            "Parameter"          = [ConsoleColor]::DarkGreen
+            "Default"            = [ConsoleColor]::White
+            "Error"              = [ConsoleColor]::Red
+            "Selection"          = [ConsoleColor]::Yellow
+            "Keyword"            = [ConsoleColor]::Blue
+        }
     }
-}
-try {
-    Set-PSReadLineOption @PSReadLineOptions
-}
-catch [System.Management.Automation.ParameterBindingException] {
-    # Handled the error so remove it
-    $error.RemoveAt($error.Count - 1)
-    # Handle PSReadline < 2
-    Set-PSReadLineOption -ContinuationPrompt $PSReadLineOptions.ContinuationPrompt
-    # Set all the valid values for older PSReadline
-    $colors = $PSReadLineOptions.Colors
-    foreach ($token in ("None", "Comment", "Keyword", "String", "Operator", "Variable", "Command", "Parameter", "Type", "Number", "Member")) {
-        if ($colors.ContainsKey($token)) {
-            Set-PSReadlineOption -TokenKind $token -ForegroundColor $colors[$token]
+    if ($(Get-Module PSReadline).Version.Major -ge 2) {
+        Set-PSReadLineOption @PSReadLineOptions
+    }
+    else {
+        # Handle PSReadline < 2
+        Set-PSReadLineOption -ContinuationPrompt $PSReadLineOptions.ContinuationPrompt
+        # Set all the valid values for older PSReadline
+        $colors = $PSReadLineOptions.Colors
+        foreach ($token in ("None", "Comment", "Keyword", "String", "Operator", "Variable", "Command", "Parameter", "Type", "Number", "Member")) {
+            if ($colors.ContainsKey($token)) {
+                Set-PSReadlineOption -TokenKind $token -ForegroundColor $colors[$token]
+            }
         }
     }
 }
