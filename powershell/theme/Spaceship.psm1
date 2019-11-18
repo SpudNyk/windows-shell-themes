@@ -268,7 +268,7 @@ if (Get-Module PSReadline) {
     }
     else {
         # Handle PSReadline < 2
-        Set-PSReadLineOption -ContinuationPrompt $PSReadLineOptions.ContinuationPrompt
+        Set-PSReadLineOption -ContinuationPrompt $PSReadLineOptions.ContinuationPrompt -ContinuationPromptForegroundColor $PSReadLineOptions.Colors.ContinuationPrompt
         # Set all the valid values for older PSReadline
         $colors = $PSReadLineOptions.Colors
         foreach ($token in ("None", "Comment", "Keyword", "String", "Operator", "Variable", "Command", "Parameter", "Type", "Number", "Member")) {
