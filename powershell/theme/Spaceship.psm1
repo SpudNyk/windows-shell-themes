@@ -112,9 +112,12 @@ function Write-Theme {
         [string]
         $with
     )
-    # write [time]
-    $timeStamp = Get-Date -Format T
-    $prompt = Write-Prompt "[$timeStamp]" -ForegroundColor $sl.Colors.TimeStampForegroundColor
+    $prompt = ""
+    if ($sl.Sections.TimeStamp) {
+        # write timestamp
+        $timeStamp = Get-Date -Format $sl.TimeStampFormat
+        $prompt += Write-Prompt "$timeStamp" -ForegroundColor $sl.Colors.TimeStampForegroundColor
+    }
     
     # write user
     $user = $sl.CurrentUser
@@ -202,6 +205,7 @@ function Write-Theme {
 
 $sl = $global:ThemeSettings #local settings
 $sl | Add-Member -NotePropertyName Sections -NotePropertyValue @{
+    TimeStamp     = $true
     User          = $false
     Computer      = $false
     Path          = $true
@@ -214,6 +218,7 @@ $sl | Add-Member -NotePropertyName ExecutionTime -NotePropertyValue @{
     MinimumSeconds = 2
     LastCommandId  = 0
 }
+$sl | Add-Member -NotePropertyName TimeStampFormat -NotePropertyValue "HH:mm:ss"
 
 $sl.PromptSymbols.StartSymbol = '#'
 $sl.PromptSymbols.PromptIndicator = [char]::ConvertFromUtf32(0x2192)

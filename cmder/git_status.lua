@@ -191,7 +191,7 @@ function GIT_status(trackRenamed, untracked, ignored)
         ignored = "traditional"
     end
 
-    gitCmd = gitCmd .. " --ignored=" .. ignored
+    gitCmd = gitCmd .. " --ignored=" .. ignored .. " 2>nul"
 
     local output = io.popen(gitCmd)
     local headers = parser(parseHeader, status)
