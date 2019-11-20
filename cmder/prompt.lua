@@ -120,10 +120,21 @@ local function promptContent(content, context, useLeader)
     return prompt
 end
 
+local function isAdmin()
+    -- this command will fail if not in an admin shell
+    local pipe = io.popen('net session 2>nul')
+    pipe:read("*all")
+    return pipe:close() == true
+end
+
+-- this will never change after startup so don't execute every time
+local is_admin = isAdmin()
+
 -- create the core context with some commonly used values
 local function createContext()
     local cwd = clink.get_cwd()
     return {
+        is_admin = is_admin,
         cwd = cwd,
         home = clink.get_env("HOME"),
         name = FILE_basename(cwd),
