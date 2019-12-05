@@ -70,16 +70,16 @@ local section = {
                 dir = "root",
                 text = "name",
                 placeholder = "npm",
-                before = "[",
-                after = "]"
+                before = UTF8char(0xf8d6) .. " ",
+                after = ""
             },
             git = {
                 context = "git_dir_info",
                 dir = "root",
                 text = "name",
                 placeholder = "git",
-                before = "{",
-                after = "}"
+                before = UTF8char(0xf1d2) .. " ",
+                after = ""
             }
         }
     }
