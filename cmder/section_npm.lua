@@ -7,7 +7,12 @@ local function get_npm_package_info(path)
     json_file:close()
     local name = string.match(content, '"name"%s*:%s*"(%g-)"')
     local version = string.match(content, '"version"%s*:%s*"(.-)"')
-    return {root = path, file = filepath, name = name, version = version}
+    return {
+        root = path,
+        file = filepath,
+        name = name or "",
+        version = version or ""
+    }
 end
 
 function CONTEXT_npm_package(context)
