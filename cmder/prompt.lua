@@ -55,17 +55,22 @@ local colorNames = {
 local ansiEscChar = "\x1b"
 local ansiEscape = ansiEscChar .. "["
 local resetEscape = ansiEscape .. "0m"
+-- OSC (Operating System Commands)
+-- see https://conemu.github.io/en/AnsiEscapeCodes.html#OSC_Operating_system_commands
+-- Note CLINK does not handle \x07 (BELL) as the end char
+local oscBegin = ansiEscChar .. "]";
+local oscFinish = ansiEscChar .. "\\";
 
 local function promptTitle(title)
     if title and title ~= "" then
-        return ansiEscChar .. "]2;" .. title .. "\x07"
+        return oscBegin .. "2;" .. title .. oscFinish
     end
     return ""
 end
 
 local function promptPath(path)
     if path and path ~= "" then
-        return ansiEscChar .. "]9;9;\"" .. path .. "\"\x07"
+        return oscBegin .. "9;9;\"" .. path .. "\"" .. oscFinish
     end
     return ""
 end
